@@ -1,2 +1,14 @@
 # python_chess
-First ever project. Building a 2-player chess game using basic python and pygame.
+First project. 
+
+A two-player chess game built with Python and Pygame.
+
+## Features
+- Legal move validation
+- Check/checkmate detection
+- Castling
+- Pawn promotion
+
+## Languages/Frameworks
+- Python
+- Pygame
