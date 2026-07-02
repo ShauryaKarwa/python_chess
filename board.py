@@ -1,35 +1,71 @@
 import pygame
 from pygame.locals import *
 
-board = [(i, j) for j in range(0, 8) for i in range(0, 8)]
-print(board)
+class Board:
+    def __init__(self):
+        self.grid = [[None for i in range(8)] for j in range(8)] #[row][col]
+        # Square Size
+        self.height = 70
+        self.width = 70
+        self.light = (240, 217, 181)
+        self.dark = (181, 136, 99)
+        self.colours = (self.light, self.dark)
+        self.dimensions = (8, 8) #(row, col)
 
-class Sq(pygame.sprite.Sprite):
-    def __init__(self, index):
-        super().__init__()
-        self.surf = pygame.Surface((70, 70))
-        self.index = index
-        self.surf.fill((240, 217, 181)) if sum(self.index) % 2 == 0 else self.surf.fill((181, 136, 99))
+    def draw(self, screen):
 
-pygame.init()
-screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Chess")
-
-clock = pygame.time.Clock()
-
-running = True
-while running:
-    for e in pygame.event.get():
-        if e.type == pygame.QUIT:
-            running = False
+        for i in range(len(self.grid)):
+            for j in range(len(self.grid[i])):
+                #Drawing Squares
+                colour = self.light if (i + j) % 2 == 0 else self.dark
+                pygame.draw.rect(screen, colour, [120 + self.width*j, 20 + self.height*i, self.width, self.height], 1) 
+                #Drawing Pieces
+                if self.grid[i][j] is not None:
+                    self.grid[i][j].draw(screen) #Implement in Piece classes
     
-    screen.fill((255, 255, 255))
-    for index in board:
-        s = Sq(index)
-        screen.blit(s.surf, (120 + s.surf.get_width()*index[0], 20 + s.surf.get_height()*index[1]))
+    def setup(self):
+        # Black Pieces
+        self.grid[0][0] = Rook("black", (0, 0))
+        self.grid[0][1] = Knight("black", (0, 1))
+        self.grid[0][2] = Bishop("black", (0, 2))
+        self.grid[0][3]= Queen("black", (0, 3))
+        self.grid[0][4]= King("black", (0, 4))
+        self.grid[0][5] = Bishop("black", (0, 5))
+        self.grid[0][6] = Knight("black", (0, 6))
+        self.grid[0][7] = Rook("black", (0, 7))
+        for i in range(8):
+            self.grid[1][i] = Pawn("black", (1, i))
+        # White Pieces
+        self.grid[7][0] = Rook("white", (7, 0))
+        self.grid[7][1] = Knight("white", (7, 1))
+        self.grid[7][2] = Bishop("white", (7, 2))
+        self.grid[7][3]= Queen("white", (7, 3))
+        self.grid[7][4]= King("white", (7, 4))
+        self.grid[7][5] = Bishop("white", (7, 5))
+        self.grid[7][6] = Knight("white", (7, 6))
+        self.grid[7][7] = Rook("white", (7, 7))
+        for i in range(8):
+            self.grid[6][i] = Pawn("white", (6, i))
+        
+    def get_piece(self, pos : tuple):
+        return self.grid[pos[0]][pos[1]]
+    
+    def move_piece(self, piece, pos):
+        self.grid[piece.pos[0]][piece.pos[1]] = None
+        self.grid[pos[0]][pos[1]] = piece
+        piece.pos = pos
+        piece.has_moved = True
+    
+    def is_empty(self, pos):
+        return self.get_piece(pos) is None 
+    
+    def is_enemy(self, pos, colour):
+        piece = self.get_piece(pos)
 
-    pygame.display.flip()
+        return piece is not None and piece.colour != colour 
+    
+    def within_board(self, pos):
+        return 0 <= pos[0] <= 7 and 0 <= pos[1] <= 7 
+                
 
-    clock.tick(60)
 
-pygame.quit()
