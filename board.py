@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 
+from Pieces import bishop, king, knight, pawn, piece, queen, rook
+
 class Board:
     def __init__(self):
         self.grid = [[None for i in range(8)] for j in range(8)] #[row][col]
@@ -25,27 +27,27 @@ class Board:
     
     def setup(self):
         # black Pieces
-        self.grid[0][0] = Rook("b", (0, 0))
-        self.grid[0][1] = Knight("b", (0, 1))
-        self.grid[0][2] = Bishop("b", (0, 2))
-        self.grid[0][3]= Queen("b", (0, 3))
-        self.grid[0][4]= King("b", (0, 4))
-        self.grid[0][5] = Bishop("b", (0, 5))
-        self.grid[0][6] = Knight("b", (0, 6))
-        self.grid[0][7] = Rook("b", (0, 7))
+        self.grid[0][0] = rook.Rook("b", (0, 0))
+        self.grid[0][1] = knight.Knight("b", (0, 1))
+        self.grid[0][2] = bishop.Bishop("b", (0, 2))
+        self.grid[0][3]= queen.Queen("b", (0, 3))
+        self.grid[0][4]= king.King("b", (0, 4))
+        self.grid[0][5] = bishop.Bishop("b", (0, 5))
+        self.grid[0][6] = knight.Knight("b", (0, 6))
+        self.grid[0][7] = rook.Rook("b", (0, 7))
         for i in range(8):
-            self.grid[1][i] = Pawn("b", (1, i))
+            self.grid[1][i] = pawn.Pawn("b", (1, i))
         # white Pieces
-        self.grid[7][0] = Rook("w", (7, 0))
-        self.grid[7][1] = Knight("w", (7, 1))
-        self.grid[7][2] = Bishop("w", (7, 2))
-        self.grid[7][3]= Queen("w", (7, 3))
-        self.grid[7][4]= King("w", (7, 4))
-        self.grid[7][5] = Bishop("w", (7, 5))
-        self.grid[7][6] = Knight("w", (7, 6))
-        self.grid[7][7] = Rook("w", (7, 7))
+        self.grid[7][0] = rook.Rook("w", (7, 0))
+        self.grid[7][1] = knight.Knight("w", (7, 1))
+        self.grid[7][2] = bishop.Bishop("w", (7, 2))
+        self.grid[7][3]= queen.Queen("w", (7, 3))
+        self.grid[7][4]= king.King("w", (7, 4))
+        self.grid[7][5] = bishop.Bishop("w", (7, 5))
+        self.grid[7][6] = knight.Knight("w", (7, 6))
+        self.grid[7][7] = rook.Rook("w", (7, 7))
         for i in range(8):
-            self.grid[6][i] = Pawn("w", (6, i))
+            self.grid[6][i] = pawn.Pawn("w", (6, i))
         
     def get_piece(self, pos : tuple):
         return self.grid[pos[0]][pos[1]]
