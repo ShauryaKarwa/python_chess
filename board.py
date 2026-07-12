@@ -68,6 +68,11 @@ class Board:
     
     def within_board(self, pos):
         return 0 <= pos[0] <= 7 and 0 <= pos[1] <= 7 
+    
+    def mouse_to_square(self, mouse):
+        row = (mouse[0] - 120)//70
+        col = (mouse[1] - 20)//70
+        return (row, col) if self.within_board((row, col)) else None
                 
 
 
