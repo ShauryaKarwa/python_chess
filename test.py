@@ -5,10 +5,12 @@ from board import Board
 
 from Pieces import bishop, king, knight, pawn, piece, queen, rook
 
-pygame.init()
-pygame.display.set_mode((1,1))
+from game import Game
 
-board = Board()
+pygame.init()
+screen = pygame.display.set_mode((1,1))
+
+'''board = Board()
 board.setup()
 
 rook1 = board.get_piece((7, 0)) # White rook
@@ -36,7 +38,14 @@ pawn1 = board.get_piece((6, 6)) #White pawn
 print(pawn1.get_legal_moves(board))
 
 board.grid[5][5] = board.get_piece((1,1)) # adding black pawn to see changes
-print(pawn1.get_legal_moves(board))
+print(pawn1.get_legal_moves(board))'''
+
+
+game = Game(screen)
+game.board.grid[6][4] = None
+game.board.grid[2][4] = queen.Queen("b", (2, 4))
+game.is_in_check("b")
+game.is_in_check("w")
 
 
 

@@ -73,6 +73,13 @@ class Board:
         row = (mouse[0] - 120)//70
         col = (mouse[1] - 20)//70
         return (row, col) if self.within_board((row, col)) else None
+
+    def find_king(self, colour):
+        for row in self.grid:
+            for piece in row:
+                if isinstance(piece, king.King) and piece.colour == colour:
+                    return piece
+        return None
                 
 
 
