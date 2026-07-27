@@ -29,12 +29,7 @@ class Game:
         if pos:
            piece = self.board.get_piece(pos)
            if self.selected_piece:
-                pseudo_moves = self.selected_piece.get_legal_moves(self.board)
-                legal_moves = []
-
-                for move in pseudo_moves:
-                    if self.is_move_safe(self.selected_piece, move):
-                        legal_moves.append(move)
+                legal_moves = self.get_legal_moves(self.selected_piece)
 
                 if piece and piece.colour == self.current_turn:
                     self.selected_piece = piece
@@ -43,6 +38,12 @@ class Game:
                         self.board.move_piece(self.selected_piece, pos)
                         self.selected_piece = None
                         self.switch_turn()
+                        if self.is_checkmate(self.current_turn):
+                            print(f"{self.current_turn} is checkmated!")
+                            self.running = False
+                        elif self.is_stalemate(self.current_turn):
+                            print("It's a stalemate!")
+                            self.running = False
            else:
                if piece and piece.colour == self.current_turn:
                     self.selected_piece = piece
@@ -61,12 +62,7 @@ class Game:
             highlight = (255, 139, 39)
             pygame.draw.rect(self.screen, highlight, [120 + self.board.width*col, 20 + self.board.height*row, self.board.width, self.board.height], 3)
 
-            pseudo_moves = self.selected_piece.get_legal_moves(self.board)
-            legal_moves = []
-            
-            for move in pseudo_moves:
-                if self.is_move_safe(self.selected_piece, move):
-                    legal_moves.append(move)
+            legal_moves = self.get_legal_moves(self.selected_piece)
 
             for move in legal_moves:
                 row_move, col_move = move
@@ -89,9 +85,7 @@ class Game:
                 if piece is not None and piece.colour != colour:
                     moves = piece.get_legal_moves(self.board)
                     if pos in moves:
-                        print("King in check!")
                         return True
-        print("King not in check!")
         return False
 
     def is_move_safe(self, piece, destination):
@@ -109,3 +103,28 @@ class Game:
         piece.pos = (crow, ccol)
 
         return not check
+
+    def get_legal_moves(self, piece):
+        pseudo_moves = piece.get_legal_moves(self.board)
+        legal_moves = []
+                    
+        for move in pseudo_moves:
+            if self.is_move_safe(piece, move):
+                legal_moves.append(move)
+
+        return legal_moves
+
+    def has_legal_moves(self, colour):
+        for row in self.board.grid:
+            for piece in row:
+                if piece is not None and piece.colour == colour:
+                    if self.get_legal_moves(piece):
+                        return True
+        return False
+
+    def is_checkmate(self, colour):
+        return self.is_in_check(colour) and not self.has_legal_moves(colour)
+
+    def is_stalemate(self, colour):
+        return not self.is_in_check(colour) and not self.has_legal_moves(colour)
+
