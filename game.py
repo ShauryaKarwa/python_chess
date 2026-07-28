@@ -11,6 +11,8 @@ class Game:
         self.current_turn = "w"
         self.selected_piece = None
         self.running = True
+        self.awaiting_promotion = False
+        self.promotion_piece = None
 
         self.board.setup()
 
@@ -25,6 +27,39 @@ class Game:
                     self.handle_click(mouse)
 
     def handle_click(self, pos):
+        if self.awaiting_promotion:
+
+            x, y = pos
+
+            if 170 <= x <= 220 and 180 <= y <= 230:
+                self.promotion(self.promotion_piece, queen.Queen)
+
+            elif 240 <= x <= 290 and 180 <= y <= 230:
+                self.promotion(self.promotion_piece, rook.Rook)
+
+            elif 310 <= x <= 360 and 180 <= y <= 230:
+                self.promotion(self.promotion_piece, bishop.Bishop)
+
+            elif 380 <= x <= 430 and 180 <= y <= 230:
+                self.promotion(self.promotion_piece, knight.Knight)
+
+            else:
+                return
+
+            self.awaiting_promotion = False
+            self.promotion_piece = None
+            self.selected_piece = None
+            self.switch_turn()
+
+            if self.is_checkmate(self.current_turn):
+                print(f"{self.current_turn} is checkmated!")
+                self.running = False
+            elif self.is_stalemate(self.current_turn):
+                print("It's a stalemate!")
+                self.running = False
+
+            return
+        
         pos = self.board.mouse_to_square(pos)
         if pos:
            piece = self.board.get_piece(pos)
@@ -36,14 +71,21 @@ class Game:
                 else:
                     if pos in legal_moves:
                         self.board.move_piece(self.selected_piece, pos)
-                        self.selected_piece = None
-                        self.switch_turn()
-                        if self.is_checkmate(self.current_turn):
-                            print(f"{self.current_turn} is checkmated!")
-                            self.running = False
-                        elif self.is_stalemate(self.current_turn):
-                            print("It's a stalemate!")
-                            self.running = False
+                        if self.needs_promotion(self.selected_piece):
+                            self.awaiting_promotion = True
+                            self.promotion_piece = self.selected_piece
+                        else:
+                            self.selected_piece = None
+                            self.switch_turn()
+
+                            if self.is_checkmate(self.current_turn):
+                                print(f"{self.current_turn} is checkmated!")
+                                self.running = False
+                            elif self.is_stalemate(self.current_turn):
+                                print("It's a stalemate!")
+                                self.running = False
+
+                        
            else:
                if piece and piece.colour == self.current_turn:
                     self.selected_piece = piece
@@ -68,6 +110,21 @@ class Game:
                 row_move, col_move = move
                 pygame.draw.circle(self.screen, (255, 0, 0),  [155 + self.board.width*col_move, 55 + self.board.height*row_move, self.board.width, self.board.height], 20, 2)
 
+        if self.awaiting_promotion:
+
+            pygame.draw.rect(self.screen, (255,255,255), [160,170,290,70])
+            pygame.draw.rect(self.screen, (0,0,0), [160,170,290,70], 2)
+
+            q = queen.Queen(self.promotion_piece.colour, (0,0))
+            r = rook.Rook(self.promotion_piece.colour, (0,0))
+            b = bishop.Bishop(self.promotion_piece.colour, (0,0))
+            k = knight.Knight(self.promotion_piece.colour, (0,0))
+
+            self.screen.blit(q.image, (170,180))
+            self.screen.blit(r.image, (240,180))
+            self.screen.blit(b.image, (310,180))
+            self.screen.blit(k.image, (380,180))
+        
         pygame.display.flip()
 
     def switch_turn(self):
@@ -134,4 +191,15 @@ class Game:
 
     def is_stalemate(self, colour):
         return not self.is_in_check(colour) and not self.has_legal_moves(colour)
+
+    def needs_promotion(self, piece):
+        if isinstance(piece, pawn.Pawn):
+            if (piece.colour == "w" and piece.pos[0] == 0) or (piece.colour == "b" and piece.pos[0] == 7):
+                return True
+        return False
+
+    def promotion(self, piece, promotion_type):
+        new_piece = promotion_type(piece.colour, piece.pos)
+        row, col = piece.pos
+        self.board.grid[row][col] = new_piece
 
