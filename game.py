@@ -109,7 +109,14 @@ class Game:
         legal_moves = []
                     
         for move in pseudo_moves:
-            if self.is_move_safe(piece, move):
+            #Check for castling
+            if isinstance(piece, king.King) and abs(move[1] - piece.pos[1]) == 2:
+                direction = 1 if move[1] > piece.pos[1] else -1
+                middle =  (piece.pos[0], piece.pos[1] + direction)
+                if not self.is_in_check(piece.colour) and self.is_move_safe(piece, move) and self.is_move_safe(piece, middle):
+                    legal_moves.append(move)
+
+            elif self.is_move_safe(piece, move):
                 legal_moves.append(move)
 
         return legal_moves

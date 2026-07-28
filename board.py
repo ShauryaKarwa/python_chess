@@ -54,10 +54,19 @@ class Board:
     
     def move_piece(self, piece, pos):
         self.grid[piece.pos[0]][piece.pos[1]] = None
+        #Castling check
+        if isinstance(piece, king.King) and abs(pos[1] - piece.pos[1]) == 2:
+            if pos[1] > piece.pos[1]:
+                rook = self.get_piece((pos[0], 7))
+                self.move_piece(rook, (pos[0], 5))
+            else:
+                rook = self.get_piece((pos[0], 0))
+                self.move_piece(rook, (pos[0], 3))
+                            
         self.grid[pos[0]][pos[1]] = piece
         piece.pos = pos
         piece.has_moved = True
-    
+        
     def is_empty(self, pos):
         return self.get_piece(pos) is None 
     
