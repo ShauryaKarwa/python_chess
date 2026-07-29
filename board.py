@@ -62,6 +62,10 @@ class Board:
             else:
                 rook = self.get_piece((pos[0], 0))
                 self.move_piece(rook, (pos[0], 3))
+        #En passant
+        if isinstance(piece, pawn.Pawn) and self.is_empty(pos) and abs(piece.pos[0] - pos[0]) == 1 and abs(piece.pos[1] - pos[1]) == 1:
+            self.grid[piece.pos[0]][pos[1]] = None
+
                             
         self.grid[pos[0]][pos[1]] = piece
         piece.pos = pos

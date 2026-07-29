@@ -13,6 +13,7 @@ class Game:
         self.running = True
         self.awaiting_promotion = False
         self.promotion_piece = None
+        self.last_move = None
 
         self.board.setup()
 
@@ -70,7 +71,9 @@ class Game:
                     self.selected_piece = piece
                 else:
                     if pos in legal_moves:
+                        start = self.selected_piece.pos
                         self.board.move_piece(self.selected_piece, pos)
+                        self.last_move = (self.selected_piece, start, self.selected_piece.pos)
                         if self.needs_promotion(self.selected_piece):
                             self.awaiting_promotion = True
                             self.promotion_piece = self.selected_piece
@@ -172,6 +175,12 @@ class Game:
                 middle =  (piece.pos[0], piece.pos[1] + direction)
                 if not self.is_in_check(piece.colour) and self.is_move_safe(piece, move) and self.is_move_safe(piece, middle):
                     legal_moves.append(move)
+            #En passant
+            elif self.last_move is not None and isinstance(piece, pawn.Pawn) and isinstance(self.last_move[0], pawn.Pawn) and self.is_move_safe(piece, move):
+                if abs(self.last_move[2][0] - self.last_move[1][0]) == 2 and abs(move[0] - self.last_move[2][0]) == 1 and move[1] == self.last_move[2][1] and self.board.is_empty(move):
+                    adjacent_piece = self.board.get_piece((piece.pos[0], move[1]))
+                    if adjacent_piece is self.last_move[0]:
+                        legal_moves.append(move) 
 
             elif self.is_move_safe(piece, move):
                 legal_moves.append(move)
