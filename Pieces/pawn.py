@@ -21,8 +21,8 @@ class Pawn(Piece):
         if board.within_board((row + direction, col -1)) and board.is_enemy((row + direction, col - 1), self.colour):
             legal_moves.append((row + direction, col - 1))
         #En passant
-        if board.within_board((row + direction, col -1)) and board.is_enemy((row, col - 1), self.colour) and isinstance(board.get_piece(row, col - 1), Pawn):
+        if board.within_board((row + direction, col -1)) and board.is_enemy((row, col - 1), self.colour) and isinstance(board.get_piece((row, col - 1)), Pawn):
             legal_moves.append((row + direction, col - 1))
-        if board.within_board((row + direction, col + 1)) and board.is_enemy((row, col + 1), self.colour) and isinstance(board.get_piece(row, col + 1), Pawn):
+        if board.within_board((row + direction, col + 1)) and board.is_enemy((row, col + 1), self.colour) and isinstance(board.get_piece((row, col + 1)), Pawn):
             legal_moves.append((row + direction, col + 1))
         return legal_moves

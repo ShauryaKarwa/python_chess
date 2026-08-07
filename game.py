@@ -18,7 +18,7 @@ class Game:
         self.board.setup()
 
     def handle_events(self):
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -111,7 +111,7 @@ class Game:
 
             for move in legal_moves:
                 row_move, col_move = move
-                pygame.draw.circle(self.screen, (255, 0, 0),  [155 + self.board.width*col_move, 55 + self.board.height*row_move, self.board.width, self.board.height], 20, 2)
+                pygame.draw.circle(self.screen, (255, 0, 0),  [155 + self.board.width*col_move, 55 + self.board.height*row_move], 20, 2)
 
         if self.awaiting_promotion:
 
@@ -176,11 +176,15 @@ class Game:
                 if not self.is_in_check(piece.colour) and self.is_move_safe(piece, move) and self.is_move_safe(piece, middle):
                     legal_moves.append(move)
             #En passant
-            elif self.last_move is not None and isinstance(piece, pawn.Pawn) and isinstance(self.last_move[0], pawn.Pawn) and self.is_move_safe(piece, move):
-                if abs(self.last_move[2][0] - self.last_move[1][0]) == 2 and abs(move[0] - self.last_move[2][0]) == 1 and move[1] == self.last_move[2][1] and self.board.is_empty(move):
-                    adjacent_piece = self.board.get_piece((piece.pos[0], move[1]))
-                    if adjacent_piece is self.last_move[0]:
-                        legal_moves.append(move) 
+            elif (isinstance(piece, pawn.Pawn) and self.last_move is not None
+                  and isinstance(self.last_move[0], pawn.Pawn)
+                  and abs(self.last_move[2][0] - self.last_move[1][0]) == 2
+                  and abs(move[0] - self.last_move[2][0]) == 1
+                  and move[1] == self.last_move[2][1]
+                  and self.board.is_empty(move)
+                  and self.board.get_piece((piece.pos[0], move[1])) is self.last_move[0]):
+                if self.is_move_safe(piece, move):
+                    legal_moves.append(move)
 
             elif self.is_move_safe(piece, move):
                 legal_moves.append(move)

@@ -19,7 +19,7 @@ class King(Piece):
 
         #Castling (King side)
         rook_king = board.get_piece((self.pos[0], self.pos[1] + 3))
-        if not self.has_moved and not rook_king.has_moved and isinstance(rook_king, Rook):
+        if not self.has_moved and isinstance(rook_king, Rook) and not rook_king.has_moved:
             path_empty = True
             for i in range(1, 3):
                 if board.get_piece((self.pos[0], self.pos[1] + i)) is not None:
@@ -31,7 +31,7 @@ class King(Piece):
                 
         #Castling (Queen side)
         rook_queen = board.get_piece((self.pos[0], self.pos[1] - 4))
-        if not self.has_moved and not rook_queen.has_moved and isinstance(rook_queen, Rook):
+        if not self.has_moved and isinstance(rook_queen, Rook) and not rook_queen.has_moved:
             path_empty = True
             for i in range(1, 4):
                 if board.get_piece((self.pos[0], self.pos[1] - i)) is not None:

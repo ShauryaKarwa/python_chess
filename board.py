@@ -20,7 +20,7 @@ class Board:
             for j in range(len(self.grid[i])):
                 #Drawing Squares
                 colour = self.light if (i + j) % 2 == 0 else self.dark
-                pygame.draw.rect(screen, colour, [120 + self.width*j, 20 + self.height*i, self.width, self.height], 1) 
+                pygame.draw.rect(screen, colour, [120 + self.width*j, 20 + self.height*i, self.width, self.height]) 
                 #Drawing Pieces
                 if self.grid[i][j] is not None:
                     self.grid[i][j].draw(screen) #Implement in Piece classes
@@ -83,8 +83,8 @@ class Board:
         return 0 <= pos[0] <= 7 and 0 <= pos[1] <= 7 
     
     def mouse_to_square(self, mouse):
-        row = (mouse[0] - 120)//70
-        col = (mouse[1] - 20)//70
+        col = (mouse[0] - 120)//70
+        row = (mouse[1] - 20)//70
         return (row, col) if self.within_board((row, col)) else None
 
     def find_king(self, colour):
